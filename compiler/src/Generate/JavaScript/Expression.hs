@@ -562,17 +562,17 @@ decomposeL mode expr funcs =
         allFuncs =
           expr:funcs
 
-        toTempVars :: Int -> Opt.Expr -> ( JsName.Name, JS.Expr )
+        toTempVars :: Int -> Opt.Expr -> ( Name.Name, JS.Expr )
         toTempVars index func =
-          ( JsName.fromLocal (Name.fromVarIndex index), generateJsExpr mode func )
+          ( Name.fromVarIndex index, generateJsExpr mode func )
 
-        tempVars :: [( JsName.Name, JS.Expr )]
+        tempVars :: [( Name.Name, JS.Expr )]
         tempVars =
           mapWithIndex toTempVars 0 allFuncs
 
         vars :: JS.Stmt
         vars =
-          JS.Vars tempVars
+          JS.Vars (map (\( name, expr ) -> ( JsName.fromLocal name, expr )) tempVars)
 
         composedApplication :: JS.Stmt
         composedApplication =
