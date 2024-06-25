@@ -558,8 +558,8 @@ decomposeL mode expr funcs =
 
     _ ->
       let
-        toTempVars :: ( Int, [( JsName.Name, JS.Expr )], Opt.Expr ) -> Opt.Expr -> ( Int, [( JsName.Name, JS.Expr )], Opt.Expr )
-        toTempVars ( index, vars, value ) func =
+        toTempVars :: Opt.Expr -> ( Int, [( JsName.Name, JS.Expr )], Opt.Expr ) -> ( Int, [( JsName.Name, JS.Expr )], Opt.Expr )
+        toTempVars func ( index, vars, value ) =
           case func of
             Opt.Accessor field ->
               ( index
@@ -579,7 +579,7 @@ decomposeL mode expr funcs =
               )
 
         ( _, vars, returnValue ) =
-          foldl toTempVars ( 0, [], Opt.VarLocal Name.dollar ) (expr:funcs)
+          foldr toTempVars ( 0, [], Opt.VarLocal Name.dollar ) (expr:funcs)
       in
       JS.Function
         Nothing
