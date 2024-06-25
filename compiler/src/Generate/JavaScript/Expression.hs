@@ -557,8 +557,27 @@ decomposeL mode expr funcs =
           decomposeL mode left (func:funcs)
 
     _ ->
-      generateJsExpr mode $
-        Opt.Function [Name.dollar] (foldr apply (Opt.VarLocal Name.dollar) (expr:funcs))
+
+      let
+        allFuncs :: [Opt.Expr]
+        allFuncs =
+          expr:funcs
+
+        toTempVars :: Int -> Opt.Expr -> ( JsName.Name, JS.Expr )
+        toTempVars index func =
+          ( JsName.makeTemp (Name.fromVarIndex index), generateJsExpr mode func )
+
+        vars :: JS.Stmt
+        vars =
+          JS.Vars (mapWithIndex toTempVars 0 allFuncs)
+
+        composedApplication :: JS.Stmt
+        composedApplication =
+          foldr apply (Opt.VarLocal Name.dollar) allFuncs
+            & generateJsExpr mode
+            & JS.Return
+      in
+      JS.Function Nothing [JsName.dollar] [ vars, composedApplication ]
 
 
 decomposeR :: Mode.Mode -> [Opt.Expr] -> Opt.Expr -> JS.Expr
@@ -571,6 +590,16 @@ decomposeR mode funcs expr =
     _ ->
       generateJsExpr mode $
         Opt.Function [Name.dollar] (foldr apply (Opt.VarLocal Name.dollar) (expr:funcs))
+
+
+mapWithIndex :: (Int -> a -> b) -> Int -> [a] -> [b]
+mapWithIndex mapper index list =
+  case list of
+    [] ->
+      []
+
+    x : xs ->
+      mapper index x : mapWithIndex mapper (index + 1) xs
 
 
 equal :: JS.Expr -> JS.Expr -> JS.Expr
