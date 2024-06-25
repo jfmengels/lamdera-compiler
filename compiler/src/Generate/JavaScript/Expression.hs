@@ -564,7 +564,7 @@ decomposeL mode expr funcs =
 
         toTempVars :: Int -> Opt.Expr -> ( JsName.Name, JS.Expr )
         toTempVars index func =
-          ( JsName.makeTemp (Name.fromVarIndex index), generateJsExpr mode func )
+          ( JsName.fromLocal (Name.fromVarIndex index), generateJsExpr mode func )
 
         vars :: JS.Stmt
         vars =
@@ -574,7 +574,7 @@ decomposeL mode expr funcs =
         composedApplication =
           foldl
             (\( expr, index ) _ ->
-              ( apply (Opt.VarLocal (Name.fromChars ("$temp$" ++ show index))) expr
+              ( apply (Opt.VarLocal (Name.fromVarIndex index)) expr
               , index + 1
               )
             )
