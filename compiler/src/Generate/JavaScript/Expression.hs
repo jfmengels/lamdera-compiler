@@ -567,6 +567,18 @@ decomposeL mode expr funcs =
               , Opt.Access value field
               )
 
+            Opt.VarLocal _ ->
+              ( index
+              , vars
+              , Opt.Call func [value]
+              )
+
+            Opt.VarGlobal _ ->
+              ( index
+              , vars
+              , Opt.Call func [value]
+              )
+
             _ ->
               let
                   name :: Name.Name
