@@ -568,7 +568,7 @@ decomposeL mode expr funcs =
 
         vars :: JS.Stmt
         vars =
-          JS.Vars (mapWithIndex toTempVars 1 allFuncs)
+          JS.Vars (mapWithIndex toTempVars 0 allFuncs)
 
         composedApplication :: JS.Stmt
         composedApplication =
@@ -578,7 +578,7 @@ decomposeL mode expr funcs =
               , index + 1
               )
             )
-            ( Opt.VarLocal Name.dollar, 1 )
+            ( Opt.VarLocal Name.dollar, 0 )
             allFuncs
             & fst
             & generateJsExpr mode
