@@ -558,11 +558,11 @@ decomposeL mode expr funcs =
 
     _ ->
       let
-        toTempVars :: [Opt.Expr] -> ( Int, [( JsName.Name, JS.Expr )], Opt.Expr ) -> ( [( JsName.Name, JS.Expr )], Opt.Expr )
+        toTempVars :: [Opt.Expr] -> ( Int, [( JsName.Name, JS.Expr )], Opt.Expr ) -> ( [( JsName.Name, JS.Expr )], JS.Expr )
         toTempVars funcs ( index, vars, value ) =
           case funcs of
             [] ->
-              ( vars, value )
+              ( vars, generateJsExpr mode value )
 
             Opt.Accessor field : fs ->
               toTempVars fs ( index, vars, Opt.Access value field )
@@ -580,15 +580,20 @@ decomposeL mode expr funcs =
                 , Opt.Call (Opt.VarLocal name) [value]
                 )
 
-        ( vars, expr ) =
+        ( vars, returnValue ) =
           toTempVars (expr:funcs) ( 0, [], Opt.VarLocal Name.dollar )
       in
       JS.Function
         Nothing
         [ JsName.dollar ]
-        [ JS.Vars vars
-        , JS.Return $ generateJsExpr mode expr
-        ]
+        (if null vars then
+            [ JS.Return returnValue ]
+
+         else
+            [ JS.Vars vars
+            , JS.Return returnValue
+            ]
+        )
 
 
 decomposeR :: Mode.Mode -> [Opt.Expr] -> Opt.Expr -> JS.Expr
