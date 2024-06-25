@@ -558,40 +558,38 @@ decomposeL mode expr funcs =
 
     _ ->
       let
-        toTempVars :: [Opt.Expr] -> ( Int, [( JsName.Name, JS.Expr )], Opt.Expr ) -> ( [( JsName.Name, JS.Expr )], JS.Expr )
-        toTempVars funcs ( index, vars, value ) =
-          case funcs of
-            [] ->
-              ( vars, generateJsExpr mode value )
+        toTempVars :: ( Int, [( JsName.Name, JS.Expr )], Opt.Expr ) -> Opt.Expr -> ( Int, [( JsName.Name, JS.Expr )], Opt.Expr )
+        toTempVars ( index, vars, value ) func =
+          case func of
+            Opt.Accessor field ->
+              ( index
+              , vars
+              , Opt.Access value field
+              )
 
-            Opt.Accessor field : fs ->
-              toTempVars fs ( index, vars, Opt.Access value field )
-
-            f : fs ->
+            _ ->
               let
                   name :: Name.Name
                   name =
                     Name.fromVarIndex index
               in
-              toTempVars
-                fs
-                ( index + 1
-                , ( JsName.fromLocal name, generateJsExpr mode f) : vars
-                , Opt.Call (Opt.VarLocal name) [value]
-                )
+              ( index + 1
+              , ( JsName.fromLocal name, generateJsExpr mode func) : vars
+              , Opt.Call (Opt.VarLocal name) [value]
+              )
 
-        ( vars, returnValue ) =
-          toTempVars (expr:funcs) ( 0, [], Opt.VarLocal Name.dollar )
+        ( _, vars, returnValue ) =
+          foldl toTempVars ( 0, [], Opt.VarLocal Name.dollar ) (expr:funcs)
       in
       JS.Function
         Nothing
         [ JsName.dollar ]
         (if null vars then
-            [ JS.Return returnValue ]
+            [ JS.Return $ generateJsExpr mode returnValue ]
 
          else
             [ JS.Vars vars
-            , JS.Return returnValue
+            , JS.Return $ generateJsExpr mode returnValue
             ]
         )
 
