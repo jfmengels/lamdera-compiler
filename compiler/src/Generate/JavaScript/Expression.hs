@@ -558,37 +558,37 @@ decomposeL mode expr funcs =
 
     _ ->
       let
-        allFuncs :: [Opt.Expr]
-        allFuncs =
-          expr:funcs
+        toTempVars :: Int -> [Opt.Expr] -> ( [( JsName.Name, JS.Expr )], Opt.Expr ) -> ( [( JsName.Name, JS.Expr )], Opt.Expr )
+        toTempVars index funcs ( vars, value ) =
+          case funcs of
+            [] ->
+              ( vars, value )
 
-        toTempVars :: Int -> Opt.Expr -> ( Name.Name, JS.Expr )
-        toTempVars index func =
-          ( Name.fromVarIndex index, generateJsExpr mode func )
+            Opt.Accessor field : fs ->
+              toTempVars index fs ( vars, Opt.Access value field )
 
-        tempVars :: [( Name.Name, JS.Expr )]
-        tempVars =
-          mapWithIndex toTempVars 0 allFuncs
+            f : fs ->
+              let
+                  name :: Name.Name
+                  name =
+                    Name.fromVarIndex index
+              in
+              toTempVars
+                (index + 1)
+                fs
+                ( ( JsName.fromLocal name, generateJsExpr mode f) : vars
+                , Opt.Call (Opt.VarLocal name) [value]
+                )
 
-        vars :: JS.Stmt
-        vars =
-          JS.Vars (map (\( name, expr ) -> ( JsName.fromLocal name, expr )) tempVars)
-
-        composedApplication :: JS.Stmt
-        composedApplication =
-          foldl
-            (\( expr, index ) _ ->
-              ( apply (Opt.VarLocal (Name.fromVarIndex index)) expr
-              , index + 1
-              )
-            )
-            ( Opt.VarLocal Name.dollar, 0 )
-            allFuncs
-            & fst
-            & generateJsExpr mode
-            & JS.Return
+        ( vars, expr ) =
+          toTempVars 0 (expr:funcs) ( [], Opt.VarLocal Name.dollar )
       in
-      JS.Function Nothing [JsName.dollar] [ vars, composedApplication ]
+      JS.Function
+        Nothing
+        [ JsName.dollar ]
+        [ JS.Vars vars
+        , JS.Return $ generateJsExpr mode expr
+        ]
 
 
 decomposeR :: Mode.Mode -> [Opt.Expr] -> Opt.Expr -> JS.Expr
