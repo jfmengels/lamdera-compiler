@@ -557,7 +557,6 @@ decomposeL mode expr funcs =
           decomposeL mode left (func:funcs)
 
     _ ->
-
       let
         allFuncs :: [Opt.Expr]
         allFuncs =
@@ -569,11 +568,19 @@ decomposeL mode expr funcs =
 
         vars :: JS.Stmt
         vars =
-          JS.Vars (mapWithIndex toTempVars 0 allFuncs)
+          JS.Vars (mapWithIndex toTempVars 1 allFuncs)
 
         composedApplication :: JS.Stmt
         composedApplication =
-          foldr apply (Opt.VarLocal Name.dollar) allFuncs
+          foldl
+            (\( expr, index ) _ ->
+              ( apply (Opt.VarLocal (Name.fromChars ("$temp$" ++ show index))) expr
+              , index + 1
+              )
+            )
+            ( Opt.VarLocal Name.dollar, 1 )
+            allFuncs
+            & fst
             & generateJsExpr mode
             & JS.Return
       in
