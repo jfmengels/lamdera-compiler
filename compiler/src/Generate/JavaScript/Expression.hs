@@ -510,6 +510,19 @@ generateBasicsCall mode home name args =
         "negate"   -> JS.Prefix JS.PrefixNegate arg
         "toFloat"  -> arg
         "truncate" -> JS.Infix JS.OpBitwiseOr arg (JS.Int 0)
+        "composeL" ->
+          let
+            name :: Name.Name
+            name =
+              Name.fromChars "$f"
+          in
+          JS.Function
+            Nothing
+            [JsName.fromLocal name]
+            [ JS.Return (decompose mode elmArg
+                [Opt.VarLocal (Name.fromChars "$f")]
+              )
+            ]
         _          -> generateGlobalCall home name [arg]
 
     [elmLeft, elmRight] ->
