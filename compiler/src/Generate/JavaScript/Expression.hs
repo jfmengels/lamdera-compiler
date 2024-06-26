@@ -510,7 +510,8 @@ generateBasicsCall mode home name args =
         "negate"   -> JS.Prefix JS.PrefixNegate arg
         "toFloat"  -> arg
         "truncate" -> JS.Infix JS.OpBitwiseOr arg (JS.Int 0)
-        "composeL" -> decomposeLSingleArgument mode elmArg
+        "composeL" -> decomposeSingleArgument mode (Opt.VarLocal (Name.fromChars "$f")) elmArg
+        "composeR" -> decomposeSingleArgument mode elmArg (Opt.VarLocal (Name.fromChars "$f"))
         _          -> generateGlobalCall home name [arg]
 
     [elmLeft, elmRight] ->
@@ -549,8 +550,9 @@ generateBasicsCall mode home name args =
     _ ->
       generateGlobalCall home name (map (generateJsExpr mode) args)
 
-decomposeLSingleArgument :: Mode.Mode -> Opt.Expr -> JS.Expr
-decomposeLSingleArgument mode expr =
+
+decomposeSingleArgument :: Mode.Mode -> Opt.Expr -> Opt.Expr -> JS.Expr
+decomposeSingleArgument mode appliedFirst appliedSecond =
   let
     name :: Name.Name
     name =
@@ -559,10 +561,8 @@ decomposeLSingleArgument mode expr =
   JS.Function
     Nothing
     [ JsName.fromLocal name ]
-    [ JS.Return (decompose mode expr
-        [Opt.VarLocal (Name.fromChars "$f")]
-      )
-    ]
+    [ JS.Return (decompose mode appliedSecond [appliedFirst]) ]
+
 
 decompose :: Mode.Mode -> Opt.Expr -> [Opt.Expr] -> JS.Expr
 decompose mode expr funcs =
