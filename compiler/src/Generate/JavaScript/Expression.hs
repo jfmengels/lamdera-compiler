@@ -579,6 +579,12 @@ decomposeL mode expr funcs =
               , Opt.Call func [value]
               )
 
+            Opt.VarBox _ ->
+              ( index
+              , vars
+              , Opt.Call func [value]
+              )
+
             _ ->
               let
                   name :: Name.Name
