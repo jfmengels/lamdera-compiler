@@ -447,3 +447,418 @@ Executable lamdera
         -- elm-format local vendor package
         elm-format-lib,
         elm-format
+
+Executable typing
+    if flag(dev)
+        ghc-options: -O0 -Wall -Werror
+    else
+        -- Make everything an error, ignoring the ones that already sit in core
+        ghc-options: -O2 -rtsopts -threaded "-with-rtsopts=-N -qg -A128m"
+            -Werror
+            -Wno-error=noncanonical-monad-instances
+            -Wno-error=unused-imports
+            -Wno-error=unused-matches
+            -Wno-error=unused-top-binds
+            -Wno-error=unused-do-bind
+            -Wno-error=name-shadowing
+            -- We never use this Haskell feature, so skipping Evan's usages of it
+            -Wno-error=incomplete-uni-patterns
+
+        -- add -eventlog for (elm make src/Main.elm +RTS -l; threadscope elm.eventlog)
+        -- https://www.oreilly.com/library/view/parallel-and-concurrent/9781449335939/
+
+    -- if os(windows)
+    --     -- https://gitlab.haskell.org/ghc/ghc/-/issues/20878
+    --     -- https://gitlab.haskell.org/ghc/ghc/-/issues/20010#note_359766
+    -- extra-libraries: stdc++ supc++ gcc_s gcc_s_seh-1
+    -- extra-libraries: msys-stdc++-6
+    -- build-depends: system-cxx-std-lib
+
+    Hs-Source-Dirs:
+        compiler/src
+        builder/src
+        terminal/impl
+        terminal/src
+        -- Lamdera
+        extra
+        test
+        -- Elmx
+        ext-common
+        ext-sentry
+        ext-elm-pages
+
+    Main-Is:
+        MainTyping.hs
+
+    other-modules:
+        Bump
+        Develop
+        Diff
+        Init
+        Install
+        Make
+        Publish
+        Repl
+
+        -- terminal args
+        Terminal
+        Terminal.Chomp
+        Terminal.Error
+        Terminal.Helpers
+        Terminal.Internal
+
+        -- from terminal/
+        Develop.Generate.Help
+        Develop.Generate.Index
+        Develop.StaticFiles
+        Develop.StaticFiles.Build
+
+        -- from builder/
+        Build
+        BackgroundWriter
+        Deps.Bump
+        Deps.Diff
+        Deps.Registry
+        Deps.Solver
+        Deps.Website
+        File
+        Generate
+        Http
+        Reporting
+        Reporting.Exit
+        Reporting.Exit.Help
+        Reporting.Task
+        Stuff
+
+        -- Elm things
+        Elm.Outline
+        Elm.Details
+        --
+        Elm.Compiler.Imports
+        Elm.Compiler.Type
+        Elm.Compiler.Type.Extract
+        Elm.Constraint
+        Elm.Docs
+        Elm.Float
+        Elm.Interface
+        Elm.Kernel
+        Elm.Licenses
+        Elm.Magnitude
+        Elm.ModuleName
+        Elm.Package
+        Elm.String
+        Elm.Version
+
+        -- data structures
+        Data.Bag
+        Data.Index
+        Data.Map.Utils
+        Data.Name
+        Data.NonEmptyList
+        Data.OneOrMore
+        Data.Utf8
+
+        -- json
+        Json.Decode
+        Json.Encode
+        Json.String
+
+        -- from compiler/
+        AST.Canonical
+        AST.Optimized
+        AST.Source
+        AST.Utils.Binop
+        AST.Utils.Shader
+        AST.Utils.Type
+        Canonicalize.Effects
+        Canonicalize.Environment
+        Canonicalize.Environment.Dups
+        Canonicalize.Environment.Foreign
+        Canonicalize.Environment.Local
+        Canonicalize.Expression
+        Canonicalize.Module
+        Canonicalize.Pattern
+        Canonicalize.Type
+        Compile
+        Generate.Html
+        Generate.JavaScript
+        Generate.JavaScript.Builder
+        Generate.JavaScript.Expression
+        Generate.JavaScript.Functions
+        Generate.JavaScript.Name
+        Generate.Mode
+        Nitpick.Debug
+        Nitpick.PatternMatches
+        Optimize.Case
+        Optimize.DecisionTree
+        Optimize.Expression
+        Optimize.Module
+        Optimize.Names
+        Optimize.Port
+        Parse.Declaration
+        Parse.Expression
+        Parse.Keyword
+        Parse.Module
+        Parse.Number
+        Parse.Pattern
+        Parse.Shader
+        Parse.Space
+        Parse.String
+        Parse.Symbol
+        Parse.Type
+        Parse.Variable
+        Parse.Primitives
+        Reporting.Annotation
+        Reporting.Doc
+        Reporting.Error
+        Reporting.Error.Canonicalize
+        Reporting.Error.Docs
+        Reporting.Error.Import
+        Reporting.Error.Json
+        Reporting.Error.Main
+        Reporting.Error.Pattern
+        Reporting.Error.Syntax
+        Reporting.Error.Type
+        Reporting.Render.Code
+        Reporting.Render.Type
+        Reporting.Render.Type.Localizer
+        Reporting.Report
+        Reporting.Result
+        Reporting.Suggest
+        Reporting.Warning
+        Type.Constrain.Expression
+        Type.Constrain.Module
+        Type.Constrain.Pattern
+        Type.Error
+        Type.Instantiate
+        Type.Occurs
+        Type.Solve
+        Type.Type
+        Type.Unify
+        Type.UnionFind
+        Paths_elm
+
+
+        -- Lamdera --
+        Lamdera
+
+        Lamdera.CLI
+        Lamdera.CLI.Live
+        Lamdera.CLI.Login
+        Lamdera.CLI.Check
+        Lamdera.CLI.Deploy
+        Lamdera.CLI.Reset
+        Lamdera.CLI.Update
+        -- CLI Experimental
+        Lamdera.CLI.Annotate
+        Lamdera.CLI.Interpreter
+
+        Lamdera.AppConfig
+        Lamdera.Checks
+        Lamdera.Constrain
+        Lamdera.Evergreen.MigrationDestructive
+        Lamdera.Evergreen.MigrationGenerator
+        Lamdera.Evergreen.MigrationGeneratorHelpers
+        Lamdera.Evergreen.MigrationGeneratorUnion
+        Lamdera.Evergreen.MigrationHarness
+        Lamdera.Evergreen.MigrationSpecialCases
+        Lamdera.Evergreen.ModifyAST
+        Lamdera.Evergreen.Snapshot
+        Lamdera.Extensions
+        Lamdera.Graph
+        Lamdera.Hints
+        Lamdera.Init
+        Lamdera.Injection
+        Lamdera.Live
+        Lamdera.Make
+        Lamdera.Nitpick.DebugLog
+        Lamdera.Offline
+        Lamdera.PostCompile
+        Lamdera.Project
+        Lamdera.Relative
+        Lamdera.Reporting.Evergreen
+        Lamdera.Reporting.Suggestions
+        Lamdera.TypeHash
+        Lamdera.Types
+        Lamdera.Update
+        Lamdera.Version
+        Lamdera.Wire3.Core
+        Lamdera.Wire3.Decoder
+        Lamdera.Wire3.Encoder
+        Lamdera.Wire3.Graph
+        Lamdera.Wire3.Helpers
+        Lamdera.Wire3.Interfaces
+
+        -- Lamdera Utility --
+        Lamdera.Compile
+        Lamdera.Error
+        Lamdera.Http
+        Lamdera.Progress
+        SocketServer
+        Network.Status
+
+        -- Future --
+        Lamdera.ReverseProxy
+        Network.HTTP.ReverseProxy
+        Lamdera.Evaluate
+        Lamdera.Evaluate.Canonical
+        Lamdera.Evaluate.Optimized
+
+
+        -- UI Source Map Experiment --
+        Lamdera.UiSourceMap
+
+        -- Lamdera Legacy --
+        Lamdera.Legacy
+        -- Wire.Source3
+
+        -- Fusion
+        -- Fusion.Types
+        -- Fusion.Core
+        -- Fusion.Bytes
+        -- Fusion.Encode
+        -- Fusion.Binary
+        -- Lamdera.Diff
+
+
+        -- Testing:
+        EasyTest
+        Test
+        Test.Caching
+        Test.Check
+        Test.Helpers
+        Test.Lamdera
+        Test.Snapshot
+        Test.TypeHashes
+        Test.Wire
+        Test.JsOutput
+        Test.WebGL
+        Test.Lamdera.Evergreen.TestMigrationHarness
+        Test.Lamdera.Evergreen.TestMigrationGenerator
+
+
+        -- Debug helpers --
+        StandaloneInstances
+        CanSer.CanSer
+        Sanity
+        Wire.PrettyPrint
+
+        -- Elmx extensions
+        -- ext-common
+        Ext.Common
+        Ext.ElmFormat
+        Ext.File
+        Ext.Query.Canonical
+        Ext.Query.Interfaces
+        Ext.Query.Optimized
+
+        -- ext-sentry
+        Ext.Sentry
+        Ext.Filewatch
+
+        -- ext-elm-pages
+        Ext.ElmPages
+        Test.Ext.ElmPages.Check
+
+    Build-depends:
+        ansi-terminal,
+        ansi-wl-pprint < 1,
+        base,
+        binary,
+        bytestring,
+        containers,
+        directory,
+        edit-distance,
+        file-embed,
+        filelock,
+        filepath,
+        ghc-prim,
+        haskeline,
+        HTTP,
+        http-client,
+        http-client-tls,
+        http-types,
+        language-glsl,
+        mtl,
+        network,
+          -- >= 2.4 && < 2.7,
+        parsec,
+        process,
+        raw-strings-qq,
+        scientific,
+        SHA,
+        snap-core,
+        snap-server,
+        template-haskell,
+        time,
+        unordered-containers,
+        utf8-string,
+        vector,
+        zip-archive,
+
+
+        -- @LAMDERA
+
+        -- Windows metapackage
+        --system-cxx-std-lib,
+
+        -- @TODO need to remove and use Utf8 module instead somehow? Or compat it.
+        text,
+        -- Extra
+        aeson,
+        neat-interpolation,
+        natural-sort,
+        listsafe,
+        safe,
+        filemanip,
+        unix-compat,
+        githash,
+        temporary,
+
+        -- Live
+        websockets,
+        websockets-snap,
+        stm,
+        uuid,
+        broadcast-chan,
+        timeout,
+        entropy,
+        -- Debug
+        unicode-show,
+        network-info,
+
+        -- Future
+        conduit-extra,
+        warp,
+        wai,
+        stringsearch,
+
+        -- Interpreter
+        deepseq,
+
+        -- Vendor http-reverse-proxy
+        wai-logger,
+        unliftio,
+        streaming-commons,
+        conduit,
+        word8,
+        case-insensitive,
+        blaze-builder,
+
+        -- Test
+        async,
+        random,
+        tree-diff,
+        main-tester,
+
+        -- elmx
+        clock,
+        fold-debounce,
+        formatting,
+        fsnotify,
+        command,
+        lifted-base,
+
+        -- elm-format local vendor package
+        elm-format-lib,
+        elm-format
