@@ -1,15 +1,15 @@
 module WasmMain where
 
-import Data.ByteString.Builder qualified
-import Data.ByteString.Lazy qualified
-import Data.ByteString.Lazy.UTF8 qualified -- from utf8-string
-import Data.ByteString.UTF8 qualified -- from utf8-string
+import qualified Data.ByteString.Builder
+import qualified Data.ByteString.Lazy
+import qualified Data.ByteString.Lazy.UTF8 -- from utf8-string
+import qualified Data.ByteString.UTF8 -- from utf8-string
 import Debug.Trace
-import GHC.Wasm.Prim qualified as Wasm -- See https://gitlab.haskell.org/ghc/ghc/-/commit/317a915bc46fee2c824d595b0d618057bf7fbbf1#82b5a034883a3ede9540d6423738da627660f860
+import qualified GHC.Wasm.Prim as Wasm -- See https://gitlab.haskell.org/ghc/ghc/-/commit/317a915bc46fee2c824d595b0d618057bf7fbbf1#82b5a034883a3ede9540d6423738da627660f860
 import Json.Encode ((==>))
-import Json.Encode qualified
+import qualified Json.Encode
 import ToStringHelper
-import Ulm.Repl qualified
+import qualified Ulm.Repl
 
 main :: IO ()
 main = mempty
