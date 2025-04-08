@@ -638,20 +638,17 @@ Executable typing
         Type.UnionFind
         Paths_elm
 
+        -- Typing --
+        Typing
 
         -- Lamdera --
         Lamdera
-
-        Lamdera.CLI
-        Lamdera.CLI.Live
-        Lamdera.CLI.Login
+        -- CLI Experimental
         Lamdera.CLI.Check
         Lamdera.CLI.Deploy
-        Lamdera.CLI.Reset
-        Lamdera.CLI.Update
-        -- CLI Experimental
+        Lamdera.CLI.Live
+        Lamdera.CLI.Login
         Lamdera.CLI.Annotate
-        Lamdera.CLI.Interpreter
 
         Lamdera.AppConfig
         Lamdera.Checks

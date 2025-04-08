@@ -26,8 +26,7 @@ import qualified Repl
 
 
 import qualified Lamdera.Version
-import qualified Lamdera.CLI
-import qualified Lamdera.Version
+import qualified Typing
 
 -- MAIN
 
@@ -36,18 +35,7 @@ main :: IO ()
 main =
   Terminal.app intro outro
     -- @LAMDERA additions + removals
-    [ Lamdera.CLI.live
-    , Lamdera.CLI.login
-    , Lamdera.CLI.check
-    , Lamdera.CLI.deploy
-    , init
-    , install
-    , make
-    , repl
-    , Lamdera.CLI.reset
-    , Lamdera.CLI.update
-    , Lamdera.CLI.annotate
-    , Lamdera.CLI.eval
+    [ Typing.annotate
     -- , reactor
     -- , bump
     -- , diff
