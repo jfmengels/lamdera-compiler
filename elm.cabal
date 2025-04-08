@@ -454,6 +454,8 @@ Executable typing
     else
         -- Make everything an error, ignoring the ones that already sit in core
         ghc-options: -O2 -rtsopts -threaded "-with-rtsopts=-N -qg -A128m"
+            -no-hs-main
+            "-optl-Wl,--export=check"
             -Werror
             -Wno-error=noncanonical-monad-instances
             -Wno-error=unused-imports
