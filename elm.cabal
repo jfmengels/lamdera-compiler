@@ -488,7 +488,7 @@ Executable typing
         ext-elm-pages
 
     Main-Is:
-        MainTyping.hs
+        Typing/WasmMain.hs
 
     other-modules:
         Bump
@@ -640,6 +640,7 @@ Executable typing
 
         -- Typing --
         Typing
+        WasmMain
 
         -- Lamdera --
         Lamdera
