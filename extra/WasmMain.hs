@@ -1,3 +1,4 @@
+{-# LANGUAGE ForeignFunctionInterface #-}
 module WasmMain where
 
 import qualified Data.ByteString.Builder
