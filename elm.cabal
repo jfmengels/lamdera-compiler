@@ -488,7 +488,7 @@ Executable typing
         ext-elm-pages
 
     Main-Is:
-        Typing/WasmMain.hs
+        WasmMain.hs
 
     other-modules:
         Bump
