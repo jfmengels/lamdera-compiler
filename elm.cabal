@@ -640,7 +640,6 @@ Executable typing
 
         -- Typing --
         Typing
-        WasmMain
 
         -- Lamdera --
         Lamdera
