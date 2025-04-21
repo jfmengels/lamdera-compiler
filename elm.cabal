@@ -861,3 +861,8 @@ Executable typing
         -- elm-format local vendor package
         elm-format-lib,
         elm-format
+
+    if arch(wasm32)
+        build-depends:
+            -- Needed for GHC.Wasm.Prim
+            ghc-experimental >=0.1.0.0 && <0.2
